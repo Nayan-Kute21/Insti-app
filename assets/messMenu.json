@@ -1,0 +1,65 @@
+[
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 0,
+    "menuItemBreakfast": "Poha, Tea",
+    "menuItemLunch": "Dal, Rice, Chapati, Sabzi",
+    "menuItemSnacks": "Samosa, Coffee",
+    "menuItemDinner": "Paneer Butter Masala, Roti, Rice"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 1,
+    "menuItemBreakfast": "Poha, Tea",
+    "menuItemLunch": "Dal, Rice, Chapati, Sabzi",
+    "menuItemSnacks": "Samosa, Coffee",
+    "menuItemDinner": "Paneer Butter Masala, Roti, Rice"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 2,
+    "menuItemBreakfast": "Idli, Sambhar, Chutney",
+    "menuItemLunch": "Rajma, Rice, Chapati, Salad",
+    "menuItemSnacks": "Pakoda, Tea",
+    "menuItemDinner": "Chole Bhature, Rice, Pickle"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 3,
+    "menuItemBreakfast": "Aloo Paratha, Curd",
+    "menuItemLunch": "Kadhi, Rice, Chapati, Papad",
+    "menuItemSnacks": "Bhel Puri, Lemonade",
+    "menuItemDinner": "Vegetable Pulao, Raita, Salad"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 4,
+    "menuItemBreakfast": "Dosa, Sambhar, Chutney",
+    "menuItemLunch": "Paneer Curry, Rice, Chapati, Salad",
+    "menuItemSnacks": "Pav Bhaji, Tea",
+    "menuItemDinner": "Dal Tadka, Jeera Rice, Roti"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 5,
+    "menuItemBreakfast": "Upma, Chutney, Tea",
+    "menuItemLunch": "Vegetable Korma, Rice, Chapati, Pickle",
+    "menuItemSnacks": "Sandwich, Coffee",
+    "menuItemDinner": "Butter Chicken, Roti, Rice"
+  },
+  {
+    "year": 2024,
+    "month": 1,
+    "day": 6,
+    "menuItemBreakfast": "Chole, Bhature, Tea",
+    "menuItemLunch": "Dal Fry, Rice, Chapati, Salad",
+    "menuItemSnacks": "Veg Roll, Tea",
+    "menuItemDinner": "Mixed Vegetable Curry, Roti, Rice"
+  }
+]
