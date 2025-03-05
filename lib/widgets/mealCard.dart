@@ -3,10 +3,20 @@ import '../models/meal.dart';
 
 class MealCard extends StatefulWidget {
   final Meal meal;
+  final bool showVeg;
+  final bool showNonVeg;
+  final bool isCurrentMeal;
 
-  const MealCard({super.key, required this.meal});
+  const MealCard({
+    super.key,
+    required this.meal,
+    required this.showVeg,
+    required this.showNonVeg,
+    required this.isCurrentMeal,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MealCardState createState() => _MealCardState();
 }
 
@@ -19,9 +29,12 @@ class _MealCardState extends State<MealCard> {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: widget.isCurrentMeal
+            ? const BorderSide(color: Colors.blue, width: 2) // Blue outline
+            : BorderSide.none,
       ),
       color: Colors.white,
-      elevation: 0,
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -39,41 +52,74 @@ class _MealCardState extends State<MealCard> {
                 ),
                 SizedBox(width: 10),
                 Expanded(
-                  child: Divider(
-                    color: Colors.grey,
-                    thickness: 1,
-                  ),
+                  child: Divider(color: Colors.grey, thickness: 1),
                 ),
               ],
             ),
             Text(
               widget.meal.dailyItem.isNotEmpty
                   ? widget.meal.dailyItem
-                  : widget.meal.regulars.join(", "),
+                  : widget.meal.regulars,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-            const SizedBox(width: 10),
-            if (widget.meal.specials.isNotEmpty) ...[
-              const Text(
-                "SPECIALS",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
+            const SizedBox(height: 10),
+            if ((widget.showVeg && widget.meal.vegspecials.isNotEmpty) ||
+                (widget.showNonVeg &&
+                    widget.meal.nonvegspecials.isNotEmpty)) ...[
+              const Row(
+                children: [
+                  Text(
+                    "SPECIALS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Divider(color: Colors.grey, thickness: 1),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
-              Wrap(
-                spacing: 8,
-                children: widget.meal.specials.map((special) {
-                  return Chip(
-                    label: Text(special),
-                    backgroundColor: Colors.grey.shade200,
-                  );
-                }).toList(),
-              ),
+              if (widget.showVeg && widget.meal.vegspecials.isNotEmpty)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Icon(Icons.circle, size: 10, color: Colors.green),
+                    ),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        widget.meal.vegspecials,
+                        style: const TextStyle(fontSize: 14),
+                        softWrap: true,
+                      ),
+                    ),
+                  ],
+                ),
+              if (widget.showNonVeg && widget.meal.nonvegspecials.isNotEmpty)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4), // Align with text
+                      child: Icon(Icons.circle, size: 10, color: Colors.red),
+                    ),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        widget.meal.nonvegspecials,
+                        style: const TextStyle(fontSize: 14),
+                        softWrap: true,
+                      ),
+                    ),
+                  ],
+                ),
             ],
-            const Divider(),
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -81,7 +127,6 @@ class _MealCardState extends State<MealCard> {
                 });
               },
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
                     "REGULARS",
@@ -91,24 +136,27 @@ class _MealCardState extends State<MealCard> {
                       color: Colors.blue,
                     ),
                   ),
+                  const SizedBox(width: 10),
                   Icon(
                     _isExpanded
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
                     color: Colors.grey,
                   ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Divider(color: Colors.grey, thickness: 1),
+                  ),
                 ],
               ),
             ),
             if (_isExpanded)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.meal.regulars
-                    .map((regular) => Text(
-                          "• $regular",
-                          style: const TextStyle(fontSize: 14),
-                        ))
-                    .toList(),
+              Padding(
+                padding: const EdgeInsets.only(top: 0),
+                child: Text(
+                  widget.meal.regulars,
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
           ],
         ),
