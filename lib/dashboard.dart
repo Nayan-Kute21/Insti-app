@@ -8,6 +8,7 @@ class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _DashboardPageState createState() => _DashboardPageState();
 }
 

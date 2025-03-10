@@ -1,65 +1,263 @@
-[
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 0,
-    "menuItemBreakfast": "Poha, Tea",
-    "menuItemLunch": "Dal, Rice, Chapati, Sabzi",
-    "menuItemSnacks": "Samosa, Coffee",
-    "menuItemDinner": "Paneer Butter Masala, Roti, Rice"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 1,
-    "menuItemBreakfast": "Poha, Tea",
-    "menuItemLunch": "Dal, Rice, Chapati, Sabzi",
-    "menuItemSnacks": "Samosa, Coffee",
-    "menuItemDinner": "Paneer Butter Masala, Roti, Rice"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 2,
-    "menuItemBreakfast": "Idli, Sambhar, Chutney",
-    "menuItemLunch": "Rajma, Rice, Chapati, Salad",
-    "menuItemSnacks": "Pakoda, Tea",
-    "menuItemDinner": "Chole Bhature, Rice, Pickle"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 3,
-    "menuItemBreakfast": "Aloo Paratha, Curd",
-    "menuItemLunch": "Kadhi, Rice, Chapati, Papad",
-    "menuItemSnacks": "Bhel Puri, Lemonade",
-    "menuItemDinner": "Vegetable Pulao, Raita, Salad"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 4,
-    "menuItemBreakfast": "Dosa, Sambhar, Chutney",
-    "menuItemLunch": "Paneer Curry, Rice, Chapati, Salad",
-    "menuItemSnacks": "Pav Bhaji, Tea",
-    "menuItemDinner": "Dal Tadka, Jeera Rice, Roti"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 5,
-    "menuItemBreakfast": "Upma, Chutney, Tea",
-    "menuItemLunch": "Vegetable Korma, Rice, Chapati, Pickle",
-    "menuItemSnacks": "Sandwich, Coffee",
-    "menuItemDinner": "Butter Chicken, Roti, Rice"
-  },
-  {
-    "year": 2024,
-    "month": 1,
-    "day": 6,
-    "menuItemBreakfast": "Chole, Bhature, Tea",
-    "menuItemLunch": "Dal Fry, Rice, Chapati, Salad",
-    "menuItemSnacks": "Veg Roll, Tea",
-    "menuItemDinner": "Mixed Vegetable Curry, Roti, Rice"
-  }
-]
+{
+  "menuData": [
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 0,
+      "menuItemBreakfast": {
+        "daily": "Brown and White Bread, Jam, Butter, Corn Flakes, Salad",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Boiled egg (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Kofta, Aaloo Matar",
+        "specials": {
+          "veg": "Aaloo Achari, Palak Puri, Lassi",
+          "nonveg": "Aaloo Achari, Palak Puri, Lassi"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Grilled Sandwich",
+          "nonveg": "Grilled Sandwich"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Gajar Halwa, Chole, Tandoori Roti",
+          "nonveg": "Gajar Halwa, Chicken Butter Masala, Tandoori Roti"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 1,
+      "menuItemBreakfast": {
+        "daily": "Idli, Sambar, Chutney, Sprouts",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Omelette (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Rajma, Bhindi Masala",
+        "specials": {
+          "veg": "Paneer Bhurji, Jeera Rice, Butter Milk",
+          "nonveg": "Egg Curry, Jeera Rice, Butter Milk"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Samosa",
+          "nonveg": "Samosa"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Kheer, Kadhai Paneer, Naan",
+          "nonveg": "Kheer, Mutton Curry, Naan"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 2,
+      "menuItemBreakfast": {
+        "daily": "Paratha, Curd, Butter, Chutney",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Boiled Egg (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Dal Makhani, Mix Veg",
+        "specials": {
+          "veg": "Methi Malai Matar, Pulav, Lassi",
+          "nonveg": "Fish Curry, Pulav, Lassi"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Kachori",
+          "nonveg": "Kachori"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Rasgulla, Baingan Bharta, Tandoori Roti",
+          "nonveg": "Rasgulla, Chicken Curry, Tandoori Roti"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 3,
+      "menuItemBreakfast": {
+        "daily": "Brown and White Bread, Jam, Butter, Corn Flakes, Salad",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Boiled egg (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Kofta, Aaloo Matar",
+        "specials": {
+          "veg": "Aaloo Achari, Palak Puri, Lassi",
+          "nonveg": "Aaloo Achari, Palak Puri, Lassi"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Grilled Sandwich",
+          "nonveg": "Grilled Sandwich"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Gajar Halwa, Chole, Tandoori Roti",
+          "nonveg": "Gajar Halwa, Chicken Butter Masala, Tandoori Roti"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 4,
+      "menuItemBreakfast": {
+        "daily": "Idli, Sambar, Chutney, Sprouts",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Omelette (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Rajma, Bhindi Masala",
+        "specials": {
+          "veg": "Paneer Bhurji, Jeera Rice, Butter Milk",
+          "nonveg": "Egg Curry, Jeera Rice, Butter Milk"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Samosa",
+          "nonveg": "Samosa"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Kheer, Kadhai Paneer, Naan",
+          "nonveg": "Kheer, Mutton Curry, Naan"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 5,
+      "menuItemBreakfast": {
+        "daily": "Paratha, Curd, Butter, Chutney",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Boiled Egg (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Dal Makhani, Mix Veg",
+        "specials": {
+          "veg": "Methi Malai Matar, Pulav, Lassi",
+          "nonveg": "Fish Curry, Pulav, Lassi"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Kachori",
+          "nonveg": "Kachori"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Rasgulla, Baingan Bharta, Tandoori Roti",
+          "nonveg": "Rasgulla, Chicken Curry, Tandoori Roti"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "day": 6,
+      "menuItemBreakfast": {
+        "daily": "Paratha, Curd, Butter, Chutney",
+        "specials": {
+          "veg": "Banana (2)",
+          "nonveg": "Boiled Egg (2)"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemLunch": {
+        "daily": "Rice, Roti, Dal Makhani, Mix Veg",
+        "specials": {
+          "veg": "Methi Malai Matar, Pulav, Lassi",
+          "nonveg": "Fish Curry, Pulav, Lassi"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      },
+      "menuItemSnacks": {
+        "daily": "Tea",
+        "specials": {
+          "veg": "Kachori",
+          "nonveg": "Kachori"
+        },
+        "regulars": "Coffee"
+      },
+      "menuItemDinner": {
+        "daily": "Rice, Roti",
+        "specials": {
+          "veg": "Rasgulla, Baingan Bharta, Tandoori Roti",
+          "nonveg": "Rasgulla, Chicken Curry, Tandoori Roti"
+        },
+        "regulars": "Pickles, Salad, Lemons, Chilli"
+      }
+    }
+  ]
+}
