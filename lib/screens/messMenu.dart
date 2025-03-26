@@ -151,11 +151,11 @@ class _MessMenuPageState extends State<MessMenuPage>
         backgroundColor: const Color.fromRGBO(239, 243, 250, 1),
         toolbarHeight: 70, // Increase toolbar height to make AppBar thicker
         elevation: 0,
-        leadingWidth: 40, // Reduce leading width to bring title closer to back button
+        leadingWidth: 40, 
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(); // Simple pop instead of named route
           },
         ),
         titleSpacing: 0, // Reduce spacing to move title right next to back button
