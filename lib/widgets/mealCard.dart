@@ -6,6 +6,7 @@ class MealCard extends StatefulWidget {
   final bool showVeg;
   final bool showNonVeg;
   final bool isCurrentMeal;
+  final Color currentMealBorderColor;
 
   const MealCard({
     super.key,
@@ -13,6 +14,7 @@ class MealCard extends StatefulWidget {
     required this.showVeg,
     required this.showNonVeg,
     required this.isCurrentMeal,
+    this.currentMealBorderColor = const Color.fromRGBO(70, 97, 209, 1),
   });
 
   @override
@@ -26,17 +28,17 @@ class _MealCardState extends State<MealCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), // Reduced horizontal margin to increase width
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: widget.isCurrentMeal
-            ? const BorderSide(color: Colors.blue, width: 2) // Blue outline
+            ? BorderSide(color: widget.currentMealBorderColor, width: 1.5) // Blue outline
             : BorderSide.none,
       ),
       color: Colors.white,
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
