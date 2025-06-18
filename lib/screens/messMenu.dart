@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import '../widgets/mealCard.dart';
 import '../models/meal.dart';
+import '../services/api_service.dart';
 
 class MessMenuPage extends StatefulWidget {
   const MessMenuPage({super.key});
@@ -18,6 +18,8 @@ class _MessMenuPageState extends State<MessMenuPage>
   List<Meal> meals = [];
   bool showVeg = true;
   bool showNonVeg = true;
+  bool isLoading = true;
+  String errorMessage = '';
 
   // Store global keys for each meal card to measure their height
   final Map<String, GlobalKey> _mealCardKeys = {};
@@ -27,7 +29,7 @@ class _MessMenuPageState extends State<MessMenuPage>
     super.initState();
     _tabController = TabController(
         length: 7, vsync: this, initialIndex: DateTime.now().weekday - 1);
-    loadJsonAsset();
+    fetchMessMenu();
   }
 
   @override
@@ -36,63 +38,62 @@ class _MessMenuPageState extends State<MessMenuPage>
     super.dispose();
   }
 
-  Future<void> loadJsonAsset() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/messMenu.json');
-    final Map<String, dynamic> jsonData = jsonDecode(jsonString);
-
-    List<Meal> parsedMeals = [];
-
-    for (var item in jsonData['menuData']) {
-      parsedMeals.add(Meal(
-        year: item['year'],
-        month: item['month'],
-        day: item['day'],
-        type: 'Breakfast',
-        time: '7:30 - 10:00 AM',
-        dailyItem: item['menuItemBreakfast']['daily'],
-        regulars: item['menuItemBreakfast']['regulars'],
-        vegspecials: item['menuItemBreakfast']['specials']['veg'],
-        nonvegspecials: item['menuItemBreakfast']['specials']['nonveg'],
-      ));
-      parsedMeals.add(Meal(
-        year: item['year'],
-        month: item['month'],
-        day: item['day'],
-        type: 'Lunch',
-        time: '12:15 - 2:30 PM',
-        dailyItem: item['menuItemLunch']['daily'],
-        regulars: item['menuItemLunch']['regulars'],
-        vegspecials: item['menuItemLunch']['specials']['veg'],
-        nonvegspecials: item['menuItemLunch']['specials']['nonveg'],
-      ));
-      parsedMeals.add(Meal(
-        year: item['year'],
-        month: item['month'],
-        day: item['day'],
-        type: 'Snacks',
-        time: '5:30 - 6:30 PM',
-        dailyItem: item['menuItemSnacks']['daily'],
-        regulars: item['menuItemSnacks']['regulars'],
-        vegspecials: item['menuItemSnacks']['specials']['veg'],
-        nonvegspecials: item['menuItemSnacks']['specials']['nonveg'],
-      ));
-      parsedMeals.add(Meal(
-        year: item['year'],
-        month: item['month'],
-        day: item['day'],
-        type: 'Dinner',
-        time: '7:30 - 10:00 PM',
-        dailyItem: item['menuItemDinner']['daily'],
-        regulars: item['menuItemDinner']['regulars'],
-        vegspecials: item['menuItemDinner']['specials']['veg'],
-        nonvegspecials: item['menuItemDinner']['specials']['nonveg'],
-      ));
+  Future<void> fetchMessMenu() async {
+    final DateTime now = DateTime.now();
+    final int year = now.year;
+    final String month = DateFormat.MMMM().format(now); // Get month name
+    
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = '';
+      });
+      
+      final menuResponse = await ApiService.getMessMenu(year, month);
+      final List<Meal> fetchedMeals = ApiService.convertToMealsList(menuResponse, year, month);
+      
+      setState(() {
+        meals = fetchedMeals;
+        isLoading = false;
+      });
+    } catch (e) {
+      // Handle error gracefully
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Failed to load menu data. Using default menu.';
+      });
+      
+      // Load fallback data from JSON
+      loadJsonAsset();
     }
-
-    setState(() {
-      meals = parsedMeals;
-    });
+  }
+    // Keep fallback method to load from JSON
+  Future<void> loadJsonAsset() async {
+    try {
+      // Load the JSON asset file
+      final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/messMenu.json');
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+      
+      // Create a MessMenuResponse from the JSON data
+      final MessMenuResponse menuResponse = MessMenuResponse.fromJson(jsonData);
+      
+      final DateTime now = DateTime.now();
+      final int year = now.year;
+      final String month = DateFormat.MMMM().format(now);
+      
+      // Convert to meal list
+      final List<Meal> fetchedMeals = ApiService.convertToMealsList(menuResponse, year, month);
+      
+      setState(() {
+        meals = fetchedMeals;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Failed to load menu data. Please try again later.';
+      });
+    }
   }
 
   String getCurrentMealType() {
@@ -149,26 +150,29 @@ class _MessMenuPageState extends State<MessMenuPage>
       backgroundColor: const Color.fromRGBO(239, 243, 250, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(239, 243, 250, 1),
-        toolbarHeight: 70, // Increase toolbar height to make AppBar thicker
+        toolbarHeight: 70,
         elevation: 0,
-        leadingWidth: 40, 
+        leadingWidth: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.of(context).pop(); // Simple pop instead of named route
+            Navigator.of(context).pop();
           },
         ),
-        titleSpacing: 0, // Reduce spacing to move title right next to back button
+        titleSpacing: 0,
         title: const Text(
-          'Mess Menu 👩‍🍳',
+          'Mess Menu', // Removed emoji to fix potential font issues
           style: TextStyle(
             color: Color.fromRGBO(19, 46, 158, 1),
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
         ),
-        // centerTitle: true, // Removed to align title to the left
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.blue),
+            onPressed: fetchMessMenu,
+          ),
           TextButton(
             onPressed: _showReportIssueDialog,
             child: const Text(
@@ -181,12 +185,12 @@ class _MessMenuPageState extends State<MessMenuPage>
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(80), // Reduced height of tab bar
+          preferredSize: const Size.fromHeight(80),
           child: Column(
             children: [
               Container(height: 1, color: Colors.grey),
               Padding(
-                padding: const EdgeInsets.only(bottom: 8), // Reduced bottom padding
+                padding: const EdgeInsets.only(bottom: 8),
                 child: TabBar(
                   controller: _tabController,
                   isScrollable: true,
@@ -286,10 +290,32 @@ class _MessMenuPageState extends State<MessMenuPage>
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: List.generate(7, (index) => buildDayMenu(index, currentMeal, currentTimelineColor, currentTimeColor)),
-      ),
+      body: isLoading 
+        ? const Center(child: CircularProgressIndicator())
+        : errorMessage.isNotEmpty 
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: fetchMessMenu,
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            )
+          : TabBarView(
+              controller: _tabController,
+              children: List.generate(7, (index) => 
+                buildDayMenu(index, currentMeal, currentTimelineColor, currentTimeColor)
+              ),
+            ),
     );
   }
 

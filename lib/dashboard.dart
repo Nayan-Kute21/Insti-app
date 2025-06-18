@@ -63,11 +63,11 @@ class _DashboardPageState extends State<DashboardPage> {
                 // Calculate position with proper constraints
                 double indicatorPosition = width * _selectedIndex + (width - indicatorWidth) / 2;
                 
-                // Keep indicator within bounds
+                // Keep indicator within bounds with better calculation
                 if (_selectedIndex == 0) {
-                  indicatorPosition = width / 2 - indicatorWidth / 2 + 8;
+                  indicatorPosition = (width - indicatorWidth) / 2 + 4;
                 } else if (_selectedIndex == 4) {
-                  indicatorPosition = constraints.maxWidth - width / 2 - indicatorWidth / 2 - 8;
+                  indicatorPosition = constraints.maxWidth - width + (width - indicatorWidth) / 2 - 4;
                 }
                 
                 return Stack(
