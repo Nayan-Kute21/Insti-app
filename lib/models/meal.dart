@@ -38,58 +38,51 @@ class Meal {
 }
 
 class MessMenuResponse {
-  final Map<String, DayMenu> weekMenu;
+  final List<DailyMenu> dailyMenus;
 
-  MessMenuResponse({required this.weekMenu});
-  factory MessMenuResponse.fromJson(Map<String, dynamic> json) {
-    Map<String, DayMenu> weekMenu = {};
+  MessMenuResponse({required this.dailyMenus});
+
+  factory MessMenuResponse.fromJson(List<dynamic> jsonList) {
+    List<DailyMenu> dailyMenus = [];
     
-    // Handle different possible API response formats
-    if (json.containsKey('data') && json['data'] is Map<String, dynamic>) {
-      // If the API wraps the menu in a 'data' field
-      json = json['data'] as Map<String, dynamic>;
+    for (var item in jsonList) {
+      if (item is Map<String, dynamic>) {
+        dailyMenus.add(DailyMenu.fromJson(item));
+      }
     }
     
-    json.forEach((day, menu) {
-      if (menu is Map<String, dynamic>) {
-        weekMenu[day] = DayMenu.fromJson(menu);
-      }
-    });
-    
-    return MessMenuResponse(weekMenu: weekMenu);
+    return MessMenuResponse(dailyMenus: dailyMenus);
   }
 }
 
-class DayMenu {
-  final String breakfast;
-  final String lunch;
-  final String snacks;
-  final String dinner;
+class DailyMenu {
+  final int year;
+  final int month;
+  final int day;
+  final String menuItemBreakfast;
+  final String menuItemLunch;
+  final String menuItemSnacks;
+  final String menuItemDinner;
 
-  DayMenu({
-    required this.breakfast,
-    required this.lunch,
-    required this.snacks,
-    required this.dinner,
+  DailyMenu({
+    required this.year,
+    required this.month,
+    required this.day,
+    required this.menuItemBreakfast,
+    required this.menuItemLunch,
+    required this.menuItemSnacks,
+    required this.menuItemDinner,
   });
-  factory DayMenu.fromJson(Map<String, dynamic> json) {
-    // Helper function to safely extract string values from json
-    String getMenuItemSafely(dynamic value) {
-      if (value is String) {
-        return value;
-      } else if (value is List) {
-        return value.join(', ');
-      } else if (value is Map) {
-        return value.values.join(', ');
-      }
-      return '';
-    }
-    
-    return DayMenu(
-      breakfast: getMenuItemSafely(json['breakfast']),
-      lunch: getMenuItemSafely(json['lunch']),
-      snacks: getMenuItemSafely(json['snacks']),
-      dinner: getMenuItemSafely(json['dinner']),
+
+  factory DailyMenu.fromJson(Map<String, dynamic> json) {
+    return DailyMenu(
+      year: json['year'] ?? 0,
+      month: json['month'] ?? 0,
+      day: json['day'] ?? 0,
+      menuItemBreakfast: json['menuItemBreakfast'] ?? '',
+      menuItemLunch: json['menuItemLunch'] ?? '',
+      menuItemSnacks: json['menuItemSnacks'] ?? '',
+      menuItemDinner: json['menuItemDinner'] ?? '',
     );
   }
 }

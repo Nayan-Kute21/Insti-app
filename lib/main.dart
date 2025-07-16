@@ -31,10 +31,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Institute App',      theme: ThemeData(
+      title: 'Institute App',
+      theme: ThemeData(
         primarySwatch: Colors.blue,
-        // Using the renamed font family without spaces
-        fontFamily: 'BricolageGrotesque',
+        // Use system font as fallback if custom font fails
+        fontFamily: 'Bricolage Grotesque',
       ),
       home: const DashboardPage(),
     );

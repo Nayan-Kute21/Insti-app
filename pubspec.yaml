@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.20.2
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -62,7 +63,8 @@ flutter:
   assets:
     - assets/messMenu.json
     - .env
+
   fonts:
-    - family: BricolageGrotesque
+    - family: Bricolage Grotesque
       fonts:
         - asset: assets/fonts/BricolageGrotesque.ttf

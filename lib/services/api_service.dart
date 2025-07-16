@@ -5,9 +5,12 @@ import 'package:flutter/foundation.dart';
 import '../models/meal.dart';
 
 class ApiService {
-  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
-    static Future<MessMenuResponse> getMessMenu(int year, String month) async {
-    final url = Uri.parse('$baseUrl/mess-menu?year=$year&month=$month');
+  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'https://iitj-insti-app-backend.onrender.com/api';
+  
+  static Future<MessMenuResponse> getMessMenu(int year, String month) async {
+    // Convert month name to number for the API
+    int monthNumber = getMonthNumber(month);
+    final url = Uri.parse('$baseUrl/mess-menu?year=$year&month=$monthNumber');
     
     try {
       final response = await http.get(url);
@@ -16,7 +19,13 @@ class ApiService {
         final jsonData = json.decode(response.body);
         // Log success for debugging
         debugPrint('Successfully fetched mess menu data');
-        return MessMenuResponse.fromJson(jsonData);
+        
+        // Handle the case where the response is a List
+        if (jsonData is List) {
+          return MessMenuResponse.fromJson(jsonData);
+        } else {
+          throw Exception('Unexpected API response format');
+        }
       } else {
         // More detailed error logging
         debugPrint('API error: Status code ${response.statusCode}, Body: ${response.body}');
@@ -27,77 +36,121 @@ class ApiService {
       throw Exception('Failed to connect to server: $e');
     }
   }
-    static List<Meal> convertToMealsList(MessMenuResponse menuResponse, int year, String month) {
+  
+  static List<Meal> convertToMealsList(MessMenuResponse menuResponse, int year, String month) {
     List<Meal> meals = [];
-    final Map<String, int> dayMapping = {
-      'monday': 0,
-      'tuesday': 1,
-      'wednesday': 2,
-      'thursday': 3,
-      'friday': 4,
-      'saturday': 5,
-      'sunday': 6,
-    };
     
-    menuResponse.weekMenu.forEach((day, dayMenu) {
-      // Make sure the day string is trimmed and lowercase for more robust mapping
-      final String normalizedDay = day.trim().toLowerCase();
-      final int dayIndex = dayMapping[normalizedDay] ?? 0;
-      
-      // Add breakfast
+    for (var dailyMenu in menuResponse.dailyMenus) {
+      // Parse breakfast
+      var breakfastData = parseMenuItemToJson(dailyMenu.menuItemBreakfast);
       meals.add(Meal(
-        year: year,
-        month: getMonthNumber(month),
-        day: dayIndex,
+        year: dailyMenu.year,
+        month: dailyMenu.month,
+        day: dailyMenu.day,
         type: 'Breakfast',
         time: Meal.getMealTime('Breakfast'),
-        dailyItem: dayMenu.breakfast,
-        regulars: 'Standard breakfast items',
-        vegspecials: '',
-        nonvegspecials: '',
+        dailyItem: breakfastData['commonItems'] ?? '',
+        regulars: breakfastData['compulsoryItems'] ?? '',
+        vegspecials: breakfastData['vegSpecials'] ?? '',
+        nonvegspecials: breakfastData['nonVegSpecials'] ?? '',
       ));
       
-      // Add lunch
+      // Parse lunch
+      var lunchData = parseMenuItemToJson(dailyMenu.menuItemLunch);
       meals.add(Meal(
-        year: year,
-        month: getMonthNumber(month),
-        day: dayIndex,
+        year: dailyMenu.year,
+        month: dailyMenu.month,
+        day: dailyMenu.day,
         type: 'Lunch',
         time: Meal.getMealTime('Lunch'),
-        dailyItem: dayMenu.lunch,
-        regulars: 'Standard lunch items',
-        vegspecials: '',
-        nonvegspecials: '',
+        dailyItem: lunchData['commonItems'] ?? '',
+        regulars: lunchData['compulsoryItems'] ?? '',
+        vegspecials: lunchData['vegSpecials'] ?? '',
+        nonvegspecials: lunchData['nonVegSpecials'] ?? '',
       ));
       
-      // Add snacks
+      // Parse snacks
+      var snacksData = parseMenuItemToJson(dailyMenu.menuItemSnacks);
       meals.add(Meal(
-        year: year,
-        month: getMonthNumber(month),
-        day: dayIndex,
+        year: dailyMenu.year,
+        month: dailyMenu.month,
+        day: dailyMenu.day,
         type: 'Snacks',
         time: Meal.getMealTime('Snacks'),
-        dailyItem: dayMenu.snacks,
-        regulars: 'Standard snack items',
-        vegspecials: '',
-        nonvegspecials: '',
+        dailyItem: snacksData['commonItems'] ?? '',
+        regulars: snacksData['compulsoryItems'] ?? '',
+        vegspecials: snacksData['vegSpecials'] ?? '',
+        nonvegspecials: snacksData['nonVegSpecials'] ?? '',
       ));
       
-      // Add dinner
+      // Parse dinner
+      var dinnerData = parseMenuItemToJson(dailyMenu.menuItemDinner);
       meals.add(Meal(
-        year: year,
-        month: getMonthNumber(month),
-        day: dayIndex,
+        year: dailyMenu.year,
+        month: dailyMenu.month,
+        day: dailyMenu.day,
         type: 'Dinner',
         time: Meal.getMealTime('Dinner'),
-        dailyItem: dayMenu.dinner,
-        regulars: 'Standard dinner items',
-        vegspecials: '',
-        nonvegspecials: '',
+        dailyItem: dinnerData['commonItems'] ?? '',
+        regulars: dinnerData['compulsoryItems'] ?? '',
+        vegspecials: dinnerData['vegSpecials'] ?? '',
+        nonvegspecials: dinnerData['nonVegSpecials'] ?? '',
       ));
-    });
+    }
     
     return meals;
+  }
+  
+  // Helper methods to extract different parts of the menu item
+  static String _extractCommonItems(String menuItem) {
+    if (menuItem.contains('Common items:')) {
+      String commonPart = menuItem.split('Common items:')[1];
+      if (commonPart.contains('; VEG MESS:')) {
+        commonPart = commonPart.split('; VEG MESS:')[0];
+      }
+      return commonPart.trim();
+    }
+    return '';
+  }
+  
+  static String _extractVegSpecials(String menuItem) {
+    RegExp vegRegex = RegExp(r'VEG MESS:\s*([^;]+)');
+    Match? match = vegRegex.firstMatch(menuItem);
+    if (match != null) {
+      String vegPart = match.group(1)?.trim() ?? '';
+      return (vegPart.isEmpty || vegPart == '-') ? '' : vegPart;
+    }
+    return '';
+  }
+  
+  static String _extractNonVegSpecials(String menuItem) {
+    RegExp nonVegRegex = RegExp(r'NON-VEG MESS:\s*([^;]+)');
+    Match? match = nonVegRegex.firstMatch(menuItem);
+    if (match != null) {
+      String nonVegPart = match.group(1)?.trim() ?? '';
+      return (nonVegPart.isEmpty || nonVegPart == '-') ? '' : nonVegPart;
+    }
+    return '';
+  }
+  
+  static String _extractCompulsoryItems(String menuItem) {
+    RegExp compulsoryRegex = RegExp(r'COMPULSORY ITEMS:\s*(.+)$');
+    Match? match = compulsoryRegex.firstMatch(menuItem);
+    if (match != null) {
+      return match.group(1)?.trim() ?? '';
+    }
+    return '';
+  }
+  
+  // Enhanced method to create a structured JSON-like representation
+  static Map<String, dynamic> parseMenuItemToJson(String menuItem) {
+    return {
+      'commonItems': _extractCommonItems(menuItem),
+      'vegSpecials': _extractVegSpecials(menuItem),
+      'nonVegSpecials': _extractNonVegSpecials(menuItem),
+      'compulsoryItems': _extractCompulsoryItems(menuItem),
+      'fullText': menuItem,
+    };
   }
   
   static int getMonthNumber(String month) {

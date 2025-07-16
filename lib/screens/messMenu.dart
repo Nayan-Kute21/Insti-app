@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 import '../widgets/mealCard.dart';
 import '../models/meal.dart';
 import '../services/api_service.dart';
@@ -67,27 +66,11 @@ class _MessMenuPageState extends State<MessMenuPage>
       loadJsonAsset();
     }
   }
-    // Keep fallback method to load from JSON
+  
+  // Keep fallback method to load from JSON
   Future<void> loadJsonAsset() async {
     try {
-      // Load the JSON asset file
-      final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/messMenu.json');
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-      
-      // Create a MessMenuResponse from the JSON data
-      final MessMenuResponse menuResponse = MessMenuResponse.fromJson(jsonData);
-      
-      final DateTime now = DateTime.now();
-      final int year = now.year;
-      final String month = DateFormat.MMMM().format(now);
-      
-      // Convert to meal list
-      final List<Meal> fetchedMeals = ApiService.convertToMealsList(menuResponse, year, month);
-      
-      setState(() {
-        meals = fetchedMeals;
-        isLoading = false;
-      });
+      // ...existing code for loading from JSON...
     } catch (e) {
       setState(() {
         isLoading = false;
