@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'dashboard.dart';
 
 Future<void> main() async {
+  // Ensure Flutter is initialized before loading assets or plugins
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Optional: Only use if you're handling raw key events
-  // If not needed, you can remove this block entirely
+  // Configure channel buffers to handle messages properly
   const MethodChannel('flutter/keyevent')
       .setMethodCallHandler((MethodCall call) async {
-    // TODO: Handle key events if necessary
+    // Handle key events if needed
     return null;
   });
 
-  // Load environment variables from .env file
   try {
-    await dotenv.load(fileName: ".env");
-    debugPrint('Environment variables loaded successfully.');
+    // Load environment variables from the root directory
+    await dotenv.load();
   } catch (e) {
     debugPrint('Failed to load .env file: $e');
-    // Optional: fallback strategy or app exit
+    // Continue without environment variables, using default values
   }
 
   runApp(const MyApp());
@@ -34,12 +32,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Institute App',
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'Bricolage Grotesque', // Fallback handled by Flutter
-        scaffoldBackgroundColor: Colors.white,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        // Use system font as fallback if custom font fails
+        fontFamily: 'Bricolage Grotesque',
       ),
       home: const DashboardPage(),
     );
