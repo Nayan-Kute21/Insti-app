@@ -136,20 +136,19 @@ class _MessMenuPageState extends State<MessMenuPage>
         toolbarHeight: 70,
         elevation: 0,
         leadingWidth: 40,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
         titleSpacing: 0,
-        title: const Text(
-          'Mess Menu', // Removed emoji to fix potential font issues
-          style: TextStyle(
-            color: Color.fromRGBO(19, 46, 158, 1),
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+        title: const Row( // Use a Row to arrange widgets horizontally
+          children: [
+            SizedBox(width: 8), // This adds your desired space
+            Text(
+              'Mess Menu',
+              style: TextStyle(
+                color: Color.fromRGBO(19, 46, 158, 1),
+                fontWeight: FontWeight.bold,
+                fontSize: 20, // Added a font size
+              ),
+            ),
+          ],
         ),
         actions: [
           IconButton(

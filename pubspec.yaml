@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  timeago: ^3.6.1 # For '2 days ago' style timestamps
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -39,6 +39,9 @@ dependencies:
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
   google_fonts: ^6.2.1
+  flutter_web_auth_2: ^3.1.1
+  # For securely storing the token
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Make sure to add to pubspec.yaml: intl: ^0.18.1
+import 'package:intl/intl.dart';
+// --- FIX START ---
+// 1. Correct the import path and the class name used below.
+// The service was defined in 'api_lost_and_found_service.dart' as 'LostAndFoundApiService'.
+import '../services/lost_and_found_api.dart';
+// --- FIX END ---
 
 // Enum to manage the state of the report type
 enum ReportType { lost, found }
@@ -22,7 +27,16 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _markController = TextEditingController();
-  final _locationController = TextEditingController();
+
+  // --- FIX START ---
+  // 2. Instantiate the correct service class: 'LostAndFoundApiService'.
+  final _apiService = LostAndFoundApiService();
+  // --- FIX END ---
+
+  List<String> _locations = [];
+  String? _selectedLocation;
+  bool _isLoadingLocations = true;
+  String? _locationsError;
 
   // Dynamic labels that change based on the report type
   String get itemLabel =>
@@ -38,11 +52,36 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
       _reportType == ReportType.lost ? 'REPORT LOST ITEM' : 'REPORT FOUND ITEM';
 
   @override
+  void initState() {
+    super.initState();
+    _fetchLocations();
+  }
+
+  Future<void> _fetchLocations() async {
+    try {
+      final locations = await _apiService.fetchLocations();
+      // Check if the widget is still in the tree before updating the state.
+      if (mounted) {
+        setState(() {
+          _locations = locations;
+          _isLoadingLocations = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _locationsError = e.toString();
+          _isLoadingLocations = false;
+        });
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
     _markController.dispose();
-    _locationController.dispose();
     super.dispose();
   }
 
@@ -108,9 +147,7 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    // First, pop the dialog using the dialog's context.
                     Navigator.of(dialogContext).pop();
-                    // Then, pop the report screen using the screen's main context.
                     Navigator.of(context).pop();
                   },
                   style: OutlinedButton.styleFrom(
@@ -134,7 +171,6 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Just pop the dialog.
                     Navigator.of(dialogContext).pop();
                   },
                   style: ElevatedButton.styleFrom(
@@ -220,19 +256,15 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
                   hint: 'e.g., sticker, scratch, serial number',
                   maxLength: 40),
               const SizedBox(height: 24),
-              _buildTextField(
-                  label: locationLabel,
-                  controller: _locationController,
-                  hint: 'e.g., Near Library Entrance',
-                  maxLength: 40),
-              const SizedBox(height: 40), // Spacing before the button
-              // --- SUBMIT BUTTON ---
+              _buildLocationDropdown(),
+              const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      print('Report posted for a ${_reportType.name} item!');
+                      print(
+                          'Report posted for a ${_reportType.name} item in $_selectedLocation!');
                       Navigator.pop(context);
                     }
                   },
@@ -248,12 +280,11 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24), // Spacing after the button
+              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
-      // The bottomNavigationBar has been removed.
     );
   }
 
@@ -468,6 +499,69 @@ class _ReportItemScreenState extends State<ReportItemScreen> {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildLocationDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(locationLabel),
+        // Show a loading indicator while fetching locations.
+        if (_isLoadingLocations)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        // Show an error message if fetching fails.
+        else if (_locationsError != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: Text(
+                'Error: Could not load locations.',
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          )
+        // Show the dropdown once locations are loaded.
+        else
+          DropdownButtonFormField<String>(
+            value: _selectedLocation,
+            isExpanded: true,
+            decoration: InputDecoration(
+              hintText: 'Select a location',
+              hintStyle: const TextStyle(color: Color(0xFFB4B7C2)),
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF434B66)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF434B66)),
+              ),
+            ),
+            items: _locations.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedLocation = newValue;
+              });
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'This field is required';
+              }
+              return null;
+            },
+          ),
       ],
     );
   }

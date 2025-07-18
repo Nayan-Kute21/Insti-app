@@ -14,7 +14,7 @@ class BusApiService {
   Future<List<BusSchedule>> fetchAllSchedules() async {
     try {
       // 1. Fetch all bus numbers
-      final numbersResponse = await http.get(Uri.parse('$_baseUrl/bus-numbers'));
+      final numbersResponse = await http.get(Uri.parse('$_baseUrl/api/bus-numbers'));
       if (numbersResponse.statusCode != 200) {
         throw Exception('Failed to load bus numbers');
       }

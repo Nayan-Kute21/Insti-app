@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/auth_wrapper.dart'; // 1. Import this to get the UserRole enum
 import 'screens/home.dart';
 import 'screens/events.dart';
 import 'screens/messMenu.dart';
@@ -6,22 +7,57 @@ import 'screens/more_tab_navigator.dart';
 import 'screens/busSchedule.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  // 2. Accept the UserRole from the AuthWrapper
+  final UserRole userRole;
+  const DashboardPage({super.key, required this.userRole});
 
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _selectedIndex = 2; // Start on the 'More' tab
+  // 3. Start on the 'Home' tab (index 0) as it's always available
+  int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    EventsPage(),
-    MoreTabNavigator(), // Manages the 'More' tab and its sub-pages
-    BusSchedulePage(),
-    MessMenuPage(),
-  ];
+  // These lists will be built based on the user's role
+  late final List<Widget> _pages;
+  late final List<BottomNavigationBarItem> _navBarItems;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 4. Conditionally build the page list and nav items
+    if (widget.userRole == UserRole.authenticated) {
+      // User is logged in, show all 5 tabs
+      _pages = const [
+        HomePage(),
+        EventsAndClubsScreen(),
+        MoreTabNavigator(),
+        BusSchedulePage(),
+        MessMenuPage(),
+      ];
+      _navBarItems = const [
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.celebration_outlined), activeIcon: Icon(Icons.celebration), label: 'Events'),
+        BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), activeIcon: Icon(Icons.dashboard), label: 'More'),
+        BottomNavigationBarItem(icon: Icon(Icons.directions_bus_outlined), activeIcon: Icon(Icons.directions_bus), label: 'Bus'),
+        BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu_outlined), activeIcon: Icon(Icons.restaurant_menu), label: 'Mess'),
+      ];
+    } else {
+      // User is a guest, show only 3 tabs
+      _pages = const [
+        HomePage(),
+        BusSchedulePage(),
+        MessMenuPage(),
+      ];
+      _navBarItems = const [
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.directions_bus_outlined), activeIcon: Icon(Icons.directions_bus), label: 'Bus'),
+        BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu_outlined), activeIcon: Icon(Icons.restaurant_menu), label: 'Mess'),
+      ];
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,7 +72,7 @@ class _DashboardPageState extends State<DashboardPage> {
         bottom: false,
         child: IndexedStack(
           index: _selectedIndex,
-          children: _widgetOptions,
+          children: _pages, // Use the dynamically built page list
         ),
       ),
       extendBody: true,
@@ -59,7 +95,8 @@ class _DashboardPageState extends State<DashboardPage> {
             borderRadius: BorderRadius.circular(25),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                double width = constraints.maxWidth / 5;
+                // 5. Make the width calculation dynamic based on the number of items
+                double width = constraints.maxWidth / _navBarItems.length;
                 double indicatorWidth = 56;
                 double indicatorPosition = width * _selectedIndex + (width - indicatorWidth) / 2;
 
@@ -79,33 +116,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ),
                     BottomNavigationBar(
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home_outlined),
-                          activeIcon: Icon(Icons.home),
-                          label: 'Home',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.celebration_outlined),
-                          activeIcon: Icon(Icons.celebration),
-                          label: 'Events',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.dashboard_outlined),
-                          activeIcon: Icon(Icons.dashboard),
-                          label: 'More',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.directions_bus_outlined),
-                          activeIcon: Icon(Icons.directions_bus),
-                          label: 'Bus',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.restaurant_menu_outlined),
-                          activeIcon: Icon(Icons.restaurant_menu),
-                          label: 'Mess',
-                        ),
-                      ],
+                      items: _navBarItems, // Use the dynamically built item list
                       currentIndex: _selectedIndex,
                       selectedItemColor: Colors.white,
                       unselectedItemColor: Colors.grey[400],

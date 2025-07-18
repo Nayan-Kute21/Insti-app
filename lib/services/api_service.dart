@@ -10,7 +10,7 @@ class ApiService {
   static Future<MessMenuResponse> getMessMenu(int year, String month) async {
     // Convert month name to number for the API
     int monthNumber = getMonthNumber(month);
-    final url = Uri.parse('$baseUrl/mess-menu?year=$year&month=$monthNumber');
+    final url = Uri.parse('$baseUrl/api/mess-menu?year=$year&month=$monthNumber');
     
     try {
       final response = await http.get(url);

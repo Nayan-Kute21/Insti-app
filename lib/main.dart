@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dashboard.dart';
+import '../screens/auth_wrapper.dart'; // Import the AuthWrapper
 
 Future<void> main() async {
   // Ensure Flutter is initialized before loading assets or plugins
@@ -37,7 +37,9 @@ class MyApp extends StatelessWidget {
         // Use system font as fallback if custom font fails
         fontFamily: 'Bricolage Grotesque',
       ),
-      home: const DashboardPage(),
+      // Set AuthWrapper as the home screen to handle the login flow
+      home: const AuthWrapper(),
+      debugShowCheckedModeBanner: false, // Hides the debug banner
     );
   }
 }
