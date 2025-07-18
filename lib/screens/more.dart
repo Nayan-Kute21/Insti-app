@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'busSchedule.dart';
+import 'lost_and_found.dart'; // 1. Import the Lost & Found screen
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -28,18 +29,32 @@ class MorePage extends StatelessWidget {
             'Bus Schedule',
             Icons.directions_bus,
             'View campus bus timings and routes',
-            () => Navigator.push(
+                () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const BusSchedulePage()),
             ),
           ),
           const SizedBox(height: 16),
+
+          // 2. Added the Lost & Found option card here
+          _buildOptionCard(
+            context,
+            'Lost & Found',
+            Icons.search_sharp, // Using a relevant icon
+            'Find lost items or report found ones',
+                () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LostAndFoundScreen()),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           _buildOptionCard(
             context,
             'Option 1',
             Icons.star,
             'Description for Option 1',
-            () {},
+                () {},
           ),
           const SizedBox(height: 16),
           _buildOptionCard(
@@ -47,20 +62,21 @@ class MorePage extends StatelessWidget {
             'Option 2',
             Icons.settings,
             'Description for Option 2',
-            () {},
+                () {},
           ),
         ],
       ),
     );
   }
 
+  // This helper method remains unchanged
   Widget _buildOptionCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    String description,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String title,
+      IconData icon,
+      String description,
+      VoidCallback onTap,
+      ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

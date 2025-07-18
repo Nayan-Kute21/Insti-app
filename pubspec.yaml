@@ -63,8 +63,13 @@ flutter:
   assets:
     - assets/messMenu.json
     - .env
-
+    - assets/fonts/
   fonts:
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-Regular.ttf
+
     - family: Bricolage Grotesque
       fonts:
         - asset: assets/fonts/BricolageGrotesque.ttf
+
