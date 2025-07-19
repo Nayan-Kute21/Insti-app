@@ -56,7 +56,7 @@ class AuthService {
   Future<bool> _exchangeTokenForJwt(String idToken) async {
     // IMPORTANT: Replace with your actual backend endpoint for verifying Google tokens.
     final url = Uri.parse('$_baseUrl/api/v1/auth/google/signin');
-
+    debugPrint("id Token: $idToken");
     try {
       final response = await http.post(
         url,
@@ -66,7 +66,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        final jwtToken = responseBody['token']; // IMPORTANT: Adjust key based on your backend response.
+        final jwtToken = responseBody['accessToken']; // IMPORTANT: Adjust key based on your backend response.
 
         if (jwtToken != null && jwtToken.isNotEmpty) {
           await _storage.write(key: _tokenStorageKey, value: jwtToken);

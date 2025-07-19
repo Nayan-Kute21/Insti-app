@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // --- DATA MODELS TO MATCH API RESPONSE ---
 
 class ApiOrganization {
@@ -35,7 +35,7 @@ class ApiOrganization {
 // --- API SERVICE CLASS ---
 
 class ApiService {
-  final String _baseUrl = 'https://backend.instiapp.tech/api';
+  static final String _baseUrl = dotenv.env['API_BASE_URL']!;
 
   // Fetches the list of organization types (e.g., "Board")
   Future<List<String>> fetchOrganizationTypes() async {
@@ -50,7 +50,7 @@ class ApiService {
 
   // Fetches all organizations for a given type
   Future<List<ApiOrganization>> fetchOrganizationsByType(String typeName) async {
-    final response = await http.get(Uri.parse('$_baseUrl/organisations/by-type?typeName=$typeName'));
+    final response = await http.get(Uri.parse('$_baseUrl/api/organisations/by-type?typeName=$typeName'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List<dynamic> orgsJson = data['data'];

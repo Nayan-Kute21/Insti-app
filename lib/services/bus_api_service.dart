@@ -22,7 +22,7 @@ class BusApiService {
 
       // 2. Fetch the schedule for each bus number concurrently
       final List<Future<BusSchedule>> scheduleFutures = busNumbers.map((busNumber) async {
-        final scheduleResponse = await http.get(Uri.parse('$_baseUrl/bus-schedule?busNumber=$busNumber'));
+        final scheduleResponse = await http.get(Uri.parse('$_baseUrl/api/bus-schedule?busNumber=$busNumber'));
         print('RAW JSON for $busNumber: ${scheduleResponse.body}');
         if (scheduleResponse.statusCode == 200) {
           return BusSchedule.fromJson(json.decode(scheduleResponse.body));
