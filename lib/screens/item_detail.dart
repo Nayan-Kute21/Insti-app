@@ -48,49 +48,32 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           ),
         ),
       ),
-      // Use a Stack to place the button over the scrollable content
-      body: Stack(
-        children: [
-          // Your scrollable content
-          SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 100.0), // Add padding at bottom
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.item.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 16),
-                Text(widget.item.description, style: const TextStyle(color: Colors.black54, height: 1.5)),
-                const SizedBox(height: 24),
-                _buildImageCarousel(),
-                const SizedBox(height: 16),
-                _buildPageIndicator(),
-                const SizedBox(height: 24),
-                _buildInfoRow('Unique Identification Mark:', widget.item.category),
-                const SizedBox(height: 16),
-                _buildInfoRow('Last seen on:', '${widget.item.date} | 06:45 PM'),
-                const SizedBox(height: 16),
-                _buildInfoRow('Last seen at:', widget.item.location),
-              ],
-            ),
-          ),
-          // "I have found this item" button at the bottom
-          Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: ElevatedButton(
-              onPressed: () => print("I have found this item Tapped!"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF132E9E),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text('I have found this item', style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        // Adjusted padding after removing the button
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.item.name,
+                style:
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Text(widget.item.description,
+                style: const TextStyle(color: Colors.black54, height: 1.5)),
+            const SizedBox(height: 24),
+            _buildImageCarousel(),
+            const SizedBox(height: 16),
+            _buildPageIndicator(),
+            const SizedBox(height: 24),
+            _buildInfoRow('Category:', widget.item.category),
+            const SizedBox(height: 16),
+            _buildInfoRow('Last seen on:', widget.item.date),
+            const SizedBox(height: 16),
+            _buildInfoRow('Last seen at:', widget.item.location),
+          ],
+        ),
       ),
-      // --- REMOVE THE bottomNavigationBar PROPERTY ---
+      // REMOVED Positioned widget with the ElevatedButton
     );
   }
 
@@ -103,7 +86,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         itemBuilder: (context, index) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(widget.item.imageList[index], fit: BoxFit.cover),
+            child: Image.network(
+              widget.item.imageList[index],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey.shade200,
+                  child: const Icon(Icons.image_not_supported,
+                      color: Colors.grey)),
+            ),
           );
         },
       ),
@@ -111,6 +101,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   }
 
   Widget _buildPageIndicator() {
+    if (widget.item.imageList.length <= 1) {
+      return const SizedBox.shrink();
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(widget.item.imageList.length, (index) {
@@ -120,7 +113,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _currentPage == index ? const Color(0xFF132E9E) : Colors.grey.shade400,
+            color: _currentPage == index
+                ? const Color(0xFF132E9E)
+                : Colors.grey.shade400,
           ),
         );
       }),
@@ -131,9 +126,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
+        Text(title,
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(value,
+            style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w500)),
       ],
     );
   }

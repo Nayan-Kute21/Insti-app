@@ -20,7 +20,6 @@ class _MessMenuPageState extends State<MessMenuPage>
   bool isLoading = true;
   String errorMessage = '';
 
-  // Store global keys for each meal card to measure their height
   final Map<String, GlobalKey> _mealCardKeys = {};
 
   @override
@@ -40,37 +39,34 @@ class _MessMenuPageState extends State<MessMenuPage>
   Future<void> fetchMessMenu() async {
     final DateTime now = DateTime.now();
     final int year = now.year;
-    final String month = DateFormat.MMMM().format(now); // Get month name
-    
+    final String month = DateFormat.MMMM().format(now);
+
     try {
       setState(() {
         isLoading = true;
         errorMessage = '';
       });
-      
+
       final menuResponse = await ApiService.getMessMenu(year, month);
-      final List<Meal> fetchedMeals = ApiService.convertToMealsList(menuResponse, year, month);
-      
+      final List<Meal> fetchedMeals =
+      ApiService.convertToMealsList(menuResponse, year, month);
+
       setState(() {
         meals = fetchedMeals;
         isLoading = false;
       });
     } catch (e) {
-      // Handle error gracefully
       setState(() {
         isLoading = false;
         errorMessage = 'Failed to load menu data. Using default menu.';
       });
-      
-      // Load fallback data from JSON
       loadJsonAsset();
     }
   }
-  
-  // Keep fallback method to load from JSON
+
   Future<void> loadJsonAsset() async {
     try {
-      // ...existing code for loading from JSON...
+      // Your existing code for loading from a local JSON asset would go here
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -98,11 +94,9 @@ class _MessMenuPageState extends State<MessMenuPage>
         return entry.key;
       }
     }
-
     return "";
   }
 
-  // Show report issue dialog
   void _showReportIssueDialog() {
     showDialog(
       context: context,
@@ -126,8 +120,8 @@ class _MessMenuPageState extends State<MessMenuPage>
   @override
   Widget build(BuildContext context) {
     String currentMeal = getCurrentMealType();
-    final Color currentTimelineColor = Color.fromRGBO(14, 34, 119, 1);
-    final Color currentTimeColor = Color.fromRGBO(24, 57, 198, 1);
+    const Color currentTimelineColor = Color.fromRGBO(14, 34, 119, 1);
+    const Color currentTimeColor = Color.fromRGBO(24, 57, 198, 1);
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(239, 243, 250, 1),
@@ -137,15 +131,15 @@ class _MessMenuPageState extends State<MessMenuPage>
         elevation: 0,
         leadingWidth: 40,
         titleSpacing: 0,
-        title: const Row( // Use a Row to arrange widgets horizontally
+        title: const Row(
           children: [
-            SizedBox(width: 8), // This adds your desired space
+            SizedBox(width: 8),
             Text(
               'Mess Menu',
               style: TextStyle(
                 color: Color.fromRGBO(19, 46, 158, 1),
                 fontWeight: FontWeight.bold,
-                fontSize: 20, // Added a font size
+                fontSize: 20,
               ),
             ),
           ],
@@ -170,7 +164,7 @@ class _MessMenuPageState extends State<MessMenuPage>
           preferredSize: const Size.fromHeight(80),
           child: Column(
             children: [
-              Container(height: 1, color: Colors.grey),
+              Container(height: 1, color: Colors.grey[300]),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: TabBar(
@@ -199,8 +193,10 @@ class _MessMenuPageState extends State<MessMenuPage>
                     children: [
                       FilterChip(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: -2),
+                        visualDensity:
+                        const VisualDensity(horizontal: 0, vertical: -2),
+                        labelPadding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: -2),
                         padding: const EdgeInsets.all(4),
                         label: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -233,8 +229,10 @@ class _MessMenuPageState extends State<MessMenuPage>
                       const SizedBox(width: 10),
                       FilterChip(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: -2),
+                        visualDensity:
+                        const VisualDensity(horizontal: 0, vertical: -2),
+                        labelPadding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: -2),
                         padding: const EdgeInsets.all(4),
                         label: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -272,38 +270,40 @@ class _MessMenuPageState extends State<MessMenuPage>
           ),
         ),
       ),
-      body: isLoading 
-        ? const Center(child: CircularProgressIndicator())
-        : errorMessage.isNotEmpty 
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage.isNotEmpty
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: fetchMessMenu,
-                    child: const Text('Try Again'),
-                  ),
-                ],
-              ),
-            )
-          : TabBarView(
-              controller: _tabController,
-              children: List.generate(7, (index) => 
-                buildDayMenu(index, currentMeal, currentTimelineColor, currentTimeColor)
-              ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: fetchMessMenu,
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      )
+          : TabBarView(
+        controller: _tabController,
+        children: List.generate(
+            7,
+                (index) => buildDayMenu(index, currentMeal,
+                currentTimelineColor, currentTimeColor)),
+      ),
     );
   }
 
-  Widget buildDayMenu(int dayIndex, String currentMeal, Color currentTimelineColor, Color currentTimeColor) {
+  Widget buildDayMenu(int dayIndex, String currentMeal,
+      Color currentTimelineColor, Color currentTimeColor) {
     List<Meal> filteredMeals =
-        meals.where((meal) => meal.day == dayIndex).toList();
+    meals.where((meal) => meal.day == dayIndex).toList();
 
     List<Widget> mealWidgets = [];
 
@@ -311,12 +311,10 @@ class _MessMenuPageState extends State<MessMenuPage>
       var meal = filteredMeals[i];
       bool isCurrentMeal = meal.type == currentMeal;
       bool isLastMeal = i == filteredMeals.length - 1;
-      
-      // Create a unique key for this meal card
+
       String keyId = '${dayIndex}_${meal.type}';
       _mealCardKeys[keyId] = _mealCardKeys[keyId] ?? GlobalKey();
 
-      // Select icon based on meal type
       IconData mealIcon;
       switch (meal.type) {
         case 'Breakfast':
@@ -337,31 +335,31 @@ class _MessMenuPageState extends State<MessMenuPage>
 
       mealWidgets.add(
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0), // Reduced horizontal padding
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Timeline widget with dynamic height
-              !isLastMeal 
-                ? DynamicTimelineWidget(
-                    mealCardKey: _mealCardKeys[keyId]!,
-                    mealIcon: mealIcon,
-                    isCurrentMeal: isCurrentMeal,
-                    currentTimelineColor: currentTimelineColor,
-                  )
-                : SizedBox(
-                    width: 24,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Icon(
-                        mealIcon,
-                        color: isCurrentMeal ? currentTimelineColor : Colors.grey,
-                        size: 21,
-                      ),
-                    ),
+              !isLastMeal
+                  ? DynamicTimelineWidget(
+                mealCardKey: _mealCardKeys[keyId]!,
+                mealIcon: mealIcon,
+                isCurrentMeal: isCurrentMeal,
+                currentTimelineColor: currentTimelineColor,
+              )
+                  : SizedBox(
+                width: 24,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Icon(
+                    mealIcon,
+                    color: isCurrentMeal
+                        ? currentTimelineColor
+                        : Colors.grey,
+                    size: 21,
                   ),
-              const SizedBox(width: 8), // Slightly reduced space
-              // Meal content - aligned all the way left
+                ),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,14 +381,15 @@ class _MessMenuPageState extends State<MessMenuPage>
                       ),
                     ),
                     Transform.translate(
-                      offset: Offset(-16, 0), // Negative offset to remove implicit padding
+                      offset: const Offset(-16, 0),
                       child: MealCard(
                         key: _mealCardKeys[keyId],
                         meal: meal,
                         showVeg: showVeg,
                         showNonVeg: showNonVeg,
                         isCurrentMeal: isCurrentMeal,
-                        currentMealBorderColor: const Color.fromRGBO(70, 97, 209, 1),
+                        currentMealBorderColor:
+                        const Color.fromRGBO(70, 97, 209, 1),
                       ),
                     ),
                   ],
@@ -403,13 +402,12 @@ class _MessMenuPageState extends State<MessMenuPage>
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 72),
       children: mealWidgets,
     );
   }
 }
 
-// New widget for dynamic timeline
 class DynamicTimelineWidget extends StatefulWidget {
   final GlobalKey mealCardKey;
   final IconData mealIcon;
@@ -429,22 +427,21 @@ class DynamicTimelineWidget extends StatefulWidget {
 }
 
 class _DynamicTimelineWidgetState extends State<DynamicTimelineWidget> {
-  double _lineHeight = 120; // Default height
-  
+  double _lineHeight = 120;
+
   @override
   void initState() {
     super.initState();
-    // Wait for the layout to complete then measure the card
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateLineHeight();
     });
   }
 
   void _updateLineHeight() {
-    final RenderBox? renderBox = widget.mealCardKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox =
+    widget.mealCardKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null) {
       setState(() {
-        // Set line height to card height plus extra margin
         _lineHeight = renderBox.size.height + 15;
       });
     }
@@ -460,7 +457,9 @@ class _DynamicTimelineWidgetState extends State<DynamicTimelineWidget> {
             padding: const EdgeInsets.only(top: 8),
             child: Icon(
               widget.mealIcon,
-              color: widget.isCurrentMeal ? widget.currentTimelineColor : Colors.grey,
+              color: widget.isCurrentMeal
+                  ? widget.currentTimelineColor
+                  : Colors.grey,
               size: 21,
             ),
           ),
@@ -468,7 +467,9 @@ class _DynamicTimelineWidgetState extends State<DynamicTimelineWidget> {
           Container(
             width: 1.5,
             height: _lineHeight,
-            color: widget.isCurrentMeal ? widget.currentTimelineColor : Colors.grey[300],
+            color: widget.isCurrentMeal
+                ? widget.currentTimelineColor
+                : Colors.grey[300],
           ),
         ],
       ),

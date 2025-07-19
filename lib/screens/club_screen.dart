@@ -13,23 +13,18 @@ class ClubsScreen extends StatefulWidget {
 
 class _ClubsScreenState extends State<ClubsScreen> {
   final ApiService _apiService = ApiService();
-
-  // State variables to hold data and manage UI state
   late Future<Map<String, List<ApiOrganization>>> _organizationsFuture;
 
   @override
   void initState() {
     super.initState();
-    // Start fetching all data when the widget is first created
     _organizationsFuture = _fetchAllOrganizations();
   }
 
-  // Helper method to orchestrate API calls
   Future<Map<String, List<ApiOrganization>>> _fetchAllOrganizations() async {
     final types = await _apiService.fetchOrganizationTypes();
     final Map<String, List<ApiOrganization>> organizationsMap = {};
     for (var type in types) {
-      // Fetch organizations for each type and add to the map
       organizationsMap[type] = await _apiService.fetchOrganizationsByType(type);
     }
     return organizationsMap;
@@ -58,21 +53,24 @@ class _ClubsScreenState extends State<ClubsScreen> {
             appBar: AppBar(
               backgroundColor: const Color(0xFFEFF3FA),
               elevation: 0,
-              title: Row(
-                children: [
-                  const Icon(Icons.arrow_back_ios, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Clubs',
-                    style: GoogleFonts.bricolageGrotesque(
-                      color: const Color(0xFF132E9E),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+              // MODIFIED: Added a functional leading IconButton for back navigation
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  size: 20,
+                  color: Color(0xFF132E9E),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              automaticallyImplyLeading: false,
+              // MODIFIED: Title is now just the Text widget
+              title: Text(
+                'Clubs',
+                style: GoogleFonts.bricolageGrotesque(
+                  color: const Color(0xFF132E9E),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               bottom: TabBar(
                 isScrollable: true,
                 labelColor: const Color(0xFF0D0F14),
@@ -86,62 +84,28 @@ class _ClubsScreenState extends State<ClubsScreen> {
                 ),
               ),
             ),
-            body: Column(
-              children: [
-                _buildSearchBar(),
-                Expanded(
-                  child: TabBarView(
-                    children: types.map((type) {
-                      final orgs = organizationsMap[type]!;
-                      return ListView.separated(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: orgs.length,
-                        itemBuilder: (context, index) {
-                          return OrganizationTile(organization: orgs[index]);
-                        },
-                        separatorBuilder: (context, index) => const SizedBox(height: 10),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+            // MODIFIED: The Column and its child Expanded are no longer needed
+            body: TabBarView(
+              children: types.map((type) {
+                final orgs = organizationsMap[type]!;
+                return ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: orgs.length,
+                  itemBuilder: (context, index) {
+                    return OrganizationTile(organization: orgs[index]);
+                  },
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                );
+              }).toList(),
             ),
           ),
         );
       },
     );
   }
-
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search Club',
-          hintStyle: GoogleFonts.bricolageGrotesque(
-            color: const Color(0xFF9EA3B0),
-            fontWeight: FontWeight.w500,
-          ),
-          prefixIcon: const Icon(Icons.search, color: Color(0xFF9EA3B0)),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: Color(0xFFB4B7C2)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: Color(0xFFB4B7C2)),
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0),
-        ),
-      ),
-    );
-  }
+// REMOVED: The _buildSearchBar method is no longer needed
 }
 
-// --- UPDATED TILE WIDGET ---
-// Note: This tile is now simpler as the API doesn't provide follower/following status or nested children.
 class OrganizationTile extends StatelessWidget {
   final ApiOrganization organization;
   const OrganizationTile({super.key, required this.organization});
@@ -160,7 +124,7 @@ class OrganizationTile extends StatelessWidget {
           CircleAvatar(
             radius: 26,
             backgroundImage: NetworkImage(organization.avatarUrl),
-            onBackgroundImageError: (_, __) {}, // Handles cases where the image URL might fail
+            onBackgroundImageError: (_, __) {},
           ),
           const SizedBox(width: 12),
           Expanded(

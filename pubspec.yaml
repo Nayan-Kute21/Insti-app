@@ -43,7 +43,7 @@ dependencies:
   google_sign_in: ^6.1.0
   # For securely storing the token
   flutter_secure_storage: ^9.2.2
-
+  image_picker: ^1.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
