@@ -39,7 +39,8 @@ dependencies:
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
   google_fonts: ^6.2.1
-  flutter_web_auth_2: ^3.1.1
+  flutter_web_auth_2: ^4.0.0
+  google_sign_in: ^6.1.0
   # For securely storing the token
   flutter_secure_storage: ^9.2.2
 
