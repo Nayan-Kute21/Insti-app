@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
+import 'firebase_api.dart';
+
 class AuthService {
   final _storage = const FlutterSecureStorage();
   static final String _baseUrl = dotenv.env['API_BASE_URL']!;
@@ -71,6 +73,7 @@ class AuthService {
         if (jwtToken != null && jwtToken.isNotEmpty) {
           await _storage.write(key: _tokenStorageKey, value: jwtToken);
           debugPrint("Auth Success: JWT from backend stored.");
+          FirebaseApi().registerDeviceTokenAfterLogin();
           return true;
         } else {
           debugPrint("Auth Error: JWT not found in backend response.");

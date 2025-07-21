@@ -122,13 +122,19 @@ class FirebaseApi {
 
   Future<void> initNotifications() async {
     await _firebaseMessaging.requestPermission();
-    final fcmToken = await _firebaseMessaging.getToken();
-    print('====================================');
-    print('FCM Token: $fcmToken');
-    print('====================================');
-    await _registerToken(fcmToken);
+
     await initPushNotifications();
     await initLocalNotifications();
+  }
+  Future<void> registerDeviceTokenAfterLogin() async {
+    // Get the device's current FCM token.
+    final String? fcmToken = await _firebaseMessaging.getToken();
+    print('====================================');
+    print('FCM Token retrieved after login: $fcmToken');
+    print('====================================');
+
+    // Proceed to register it with the backend using the stored JWT.
+    await _registerToken(fcmToken);
   }
 
   Future<void> initPushNotifications() async {
@@ -167,17 +173,22 @@ class FirebaseApi {
 
   Future<void> _registerToken(String? token) async {
     if (token == null) return;
-    final jwt = await _secureStorage.read(key: 'jwt');
-    if (jwt == null) return;
+    // The JWT will exist because this is only called after login.
+    final jwt = await _secureStorage.read(key: 'jwt_token');
+    if (jwt == null) {
+      print('Error: Attempted to register FCM token, but no JWT was found.');
+      return;
+    }
     try {
       await http.post(
-        Uri.parse('https://backend.instiapp.tech/api/notifications/register-token'),
+        Uri.parse('https://backend.instiapp.tech/api/notification/register-token'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwt',
         },
         body: jsonEncode({'token': token}),
       );
+      print('FCM token successfully registered with backend.');
     } catch (e) {
       print('Error registering FCM token: $e');
     }
