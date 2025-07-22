@@ -5,6 +5,7 @@ import 'screens/events.dart';
 import 'screens/messMenu.dart';
 import 'screens/more_tab_navigator.dart';
 import 'screens/busSchedule.dart';
+import 'screens/profile_screen.dart';
 
 class DashboardPage extends StatefulWidget {
   final UserRole userRole;
@@ -31,6 +32,7 @@ class _DashboardPageState extends State<DashboardPage> {
         MoreTabNavigator(),
         BusSchedulePage(),
         MessMenuPage(),
+        ProfileScreen(),
       ];
       _navBarItems = const [
         BottomNavigationBarItem(
@@ -53,6 +55,10 @@ class _DashboardPageState extends State<DashboardPage> {
             icon: Icon(Icons.restaurant_menu_outlined),
             activeIcon: Icon(Icons.restaurant_menu),
             label: 'Mess'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile'),
       ];
     } else {
       _pages = const [

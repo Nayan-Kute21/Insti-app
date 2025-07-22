@@ -5,11 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:http_parser/http_parser.dart';
+
 import 'firebase_api.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
-  static final String _baseUrl = dotenv.env['API_BASE_URL']!;
+  static final String baseUrl = dotenv.env['API_BASE_URL']!;
   // This is the OAuth client ID you get from Google Cloud Console for your backend.
   static final String? _serverClientId = dotenv.env['GOOGLE_SERVER_CLIENT_ID'];
   static const String _tokenStorageKey = 'jwt_token';
@@ -57,7 +59,7 @@ class AuthService {
   /// Sends the Google idToken to the backend and stores the returned JWT.
   Future<bool> _exchangeTokenForJwt(String idToken) async {
     // IMPORTANT: Replace with your actual backend endpoint for verifying Google tokens.
-    final url = Uri.parse('$_baseUrl/api/v1/auth/google/signin');
+    final url = Uri.parse('$baseUrl/api/v1/auth/google/signin');
     debugPrint("id Token: $idToken");
     try {
       final response = await http.post(
@@ -74,6 +76,7 @@ class AuthService {
           await _storage.write(key: _tokenStorageKey, value: jwtToken);
           debugPrint("Auth Success: JWT from backend stored.");
           FirebaseApi().registerDeviceTokenAfterLogin();
+          _sendWelcomeNotification();
           return true;
         } else {
           debugPrint("Auth Error: JWT not found in backend response.");
@@ -106,5 +109,51 @@ class AuthService {
     final token = await getToken();
     // In a real app, you might also want to verify if the token is expired.
     return token != null;
+  }
+  /// Sends a welcome push notification to the user after they log in.
+  Future<void> _sendWelcomeNotification() async {
+    // Get the JWT that was just stored.
+    final jwt = await getToken();
+    if (jwt == null) {
+      debugPrint("Welcome Notification Error: Could not retrieve JWT.");
+      return;
+    }
+
+    // The backend endpoint for sending a single notification.
+    final url = Uri.parse('$baseUrl/api/notification/single');
+
+    try {
+      // 1. Create a multipart request since the endpoint expects form-data.
+      final request = http.MultipartRequest('POST', url);
+      request.headers['Authorization'] = 'Bearer $jwt';
+
+      // 2. Create the JSON part of the request payload.
+      final notificationPayload = {
+        'title': 'Welcome to IITJ Insti-App!',
+        'body': 'We\'re glad to see you here. Explore events, schedules, and more.',
+        'topic': 'Welcome' // Or any default topic you prefer
+      };
+
+      // 3. Add the JSON data as a 'request' part. This must match the @RequestPart name.
+      request.files.add(http.MultipartFile.fromString(
+        'request',
+        json.encode(notificationPayload),
+        contentType: MediaType('application', 'json'),
+      ));
+
+      // Note: We are not adding a 'file' part, which is correctly handled as optional by your backend.
+
+      // 4. Send the request and log the outcome.
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        debugPrint("Welcome notification sent successfully.");
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        debugPrint("Failed to send welcome notification. Status: ${response.statusCode}, Body: $responseBody");
+      }
+    } catch (e) {
+      debugPrint("Exception while sending welcome notification: $e");
+    }
   }
 }
